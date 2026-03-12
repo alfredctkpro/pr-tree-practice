@@ -67,18 +67,18 @@ git merge origin/main
 - `nit:` 前綴 = 非阻擋性建議
 - Review 要及時，不要拖延
 
-## GitHub 設定（待完成）
-- [ ] Branch Protection：禁止直接 push main
-- [ ] Branch Protection：需要 1 人 approve
+## GitHub 設定
+- [x] Branch Protection：禁止直接 push main（已透過 Ruleset 設定）
+- [ ] Branch Protection：需要 1 人 approve（等同事加入後再開啟）
 - [ ] 合併策略設定為僅允許 Squash and Merge
 - [ ] 合併後自動刪除 feature branch
 
 ## 練習進度
 - [x] 步驟 0：初始化 main 分支（initial commit + push）
-- [ ] 步驟 1：建立 feature branch
-- [ ] 步驟 2：寫程式 + commit
-- [ ] 步驟 3：push 分支 + 建立 PR
-- [ ] 步驟 4：Code Review 流程
-- [ ] 步驟 5：Merge PR + 清理分支
-- [ ] 步驟 6：同步 main + 清理本地分支
-- [ ] 步驟 7：設定 Branch Protection Rules
+- [x] 步驟 1：建立 feature branch
+- [x] 步驟 2：寫程式 + commit
+- [x] 步驟 3：push 分支 + 建立 PR
+- [x] 步驟 4：Code Review 流程
+- [x] 步驟 5：Merge PR + 清理分支
+- [x] 步驟 6：同步 main + 清理本地分支
+- [x] 步驟 7：設定 Branch Protection Rules
