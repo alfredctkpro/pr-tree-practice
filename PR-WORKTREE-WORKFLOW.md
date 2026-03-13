@@ -236,6 +236,69 @@ PR 頁面的 conflict 警告會自動消失，可以正常合併了。
 
 ---
 
+## Worktree（進階：同時處理多個分支）
+
+### 什麼時候用？
+你在 feature 開發到一半，突然要緊急修 main 的 bug，但不想打斷目前的工作。
+
+### 原理
+在 repo 外面建立一個新的工作資料夾，指向不同的分支。兩個資料夾共用同一個 `.git`，互不干擾。
+
+```
+pr-tree-practice/        ← 你的 feature 分支（開發到一半）
+pr-tree-hotfix/          ← hotfix 分支（另一個資料夾）
+```
+
+### 完整流程
+
+**步驟 1：建立 worktree**
+```bash
+git worktree add ../pr-tree-hotfix -b hotfix/xxx origin/main
+```
+
+| 參數 | 說明 |
+|------|------|
+| `../pr-tree-hotfix` | 新資料夾的路徑（必須在 repo 外面） |
+| `-b hotfix/xxx` | 建立新分支 |
+| `origin/main` | 基於遠端 main 來建立 |
+
+**步驟 2：在 hotfix 資料夾修 bug**
+```bash
+cd ../pr-tree-hotfix
+# 修改檔案
+git add <files>
+git commit -m "Fix bug"
+git push -u origin hotfix/xxx
+gh pr create --title "Fix bug" --body "描述"
+gh pr merge --squash --delete-branch
+```
+
+**步驟 3：清理 worktree，回到 feature**
+```bash
+cd /path/to/原本的repo
+git worktree remove ../pr-tree-hotfix
+```
+
+**步驟 4：同步 main 的改動到 feature**
+```bash
+git add <files>                  # 先 commit 未儲存的改動
+git commit -m "WIP: 開發中"
+git fetch origin
+git merge origin/main            # 可能會有 conflict，手動解決
+git push -u origin feature/xxx
+gh pr create --title "..." --body "..."
+gh pr merge --squash --delete-branch
+```
+
+### 常用指令
+```bash
+git worktree list                # 列出所有 worktree
+git worktree add <路徑> -b <分支> origin/main  # 建立 worktree
+git worktree remove <路徑>       # 移除 worktree
+```
+
+---
+
 ## 指令速查表
 
 ### 日常開發流程
@@ -275,6 +338,16 @@ git log --oneline       # 查看 commit 歷史（精簡版）
 gh pr status            # 查看 PR 狀態
 gh pr list              # 列出所有 PR
 ```
+
+### VS Code Git 狀態標記
+| 標記 | 意思 | 顏色 |
+|------|------|------|
+| **U** | Untracked — 新檔案，Git 還沒追蹤 | 綠色 |
+| **A** | Added — 已加入暫存區的新檔案 | 綠色 |
+| **M** | Modified — 已修改 | 橘色 |
+| **D** | Deleted — 已刪除 | 紅色 |
+| **R** | Renamed — 已重新命名 | 綠色 |
+| **C** | Conflict — 有衝突待解決 | 紅色 |
 
 ### 撤回操作（救命用）
 ```bash
